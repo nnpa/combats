@@ -1,0 +1,276 @@
+<?php
+namespace app\controllers;
+
+use Yii;
+use yii\web\Controller;
+use app\models\LoginForm;
+use app\models\User;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\models\SignupForm;
+use app\models\Battle;
+use app\models\UserBattle;
+use app\models\EventBoss;
+use app\models\EventParticipants;
+use app\models\Chat;
+use app\models\ResetPasswordForm;
+use app\models\PasswordResetRequestForm;
+
+class SiteController extends AppController
+{
+    /**
+     * Настройка правил доступа (Access Control).
+     * Гость (неавторизованный) может видеть страницу входа.
+     * Авторизованный может выйти.
+     */
+    
+    public function actionInfo($username){
+        $this->layout = false;
+        
+        $user = User::findOne(["username"=>$username]);
+        if(!is_null($user)){
+            return $this->render("info",["user"=>$user]);
+
+        }
+    }
+    
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'], // '@' означает авторизованного пользователя
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'logout' => ['post'], // Выход только по POST-запросу для безопасности
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Объявление действий, например, для страницы ошибок.
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+        ];
+    }
+private function getActiveEvent()
+{
+    $now = date('Y-m-d H:i:s');
+    
+    // Отладка
+    Yii::info("Checking active event at: {$now}", 'event');
+    
+    $event = EventBoss::find()
+        ->where(['is_active' => 1])
+        ->andWhere(['<=', 'start_time', $now])
+        ->andWhere(['>=', 'end_time', $now])
+        ->one();
+    
+    if (!$event) {
+        Yii::info("No active event found", 'event');
+        return null;
+    }
+    
+    Yii::info("Active event found: ID={$event->id}, battle_id={$event->battle_id}", 'event');
+    
+    if ($event && $event->battle_id) {
+        $bossBattle = UserBattle::find()
+            ->where(['battle_id' => $event->battle_id, 'bot_id' => $event->bot_id])
+            ->one();
+        
+        if (!$bossBattle) {
+            Yii::info("Boss battle not found for event {$event->id}", 'event');
+        } else {
+            Yii::info("Boss HP: {$bossBattle->hp}", 'event');
+        }
+        
+        if ($bossBattle && $bossBattle->hp <= 0) {
+            $event->is_active = 0;
+            $event->save(false);
+            Yii::info("Event {$event->id} deactivated because boss is dead", 'event');
+            return null;
+        }
+        
+        if ($event->current_hp != $bossBattle->hp) {
+            $event->current_hp = $bossBattle->hp;
+            $event->save(false);
+        }
+    }
+    
+    return $event;
+}
+    /**
+     * Действие для страницы входа.
+     */
+    public function actionLogin()
+    {
+        // Если пользователь уже вошел, перенаправляем его на главную
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new LoginForm();
+
+        // Если форма отправлена и прошла валидацию
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            // Метод login() вернет true, если все хорошо.
+            // Дальнейшая логика (запись session_id) выполнится в обработчике событий.
+            return $this->goBack(); // Или return $this->goHome();
+        }
+
+        // Отображаем вид с формой входа
+        return $this->render('login', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Действие для выхода из системы.
+     */
+public function actionLogout()
+{
+    $user = Yii::$app->user->identity;
+    
+    if ($user) {
+        $user->session_id = null;
+        $user->session_expire = null;
+        $user->isOnline = null;
+        $user->save(false);
+    }
+    
+    Yii::$app->user->logout();
+    
+    // Перенаправляем на страницу входа, НЕ на Cp
+    return $this->redirect(['login']);
+}
+    
+     /**
+     * Регистрация пользователя.
+     */
+    public function actionSignup()
+    {
+        // Если пользователь уже авторизован, не показываем форму регистрации
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new SignupForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            // Регистрация прошла успешно, можно показать сообщение и перенаправить на логин
+            Yii::$app->session->setFlash('success', 'Регистрация прошла успешно! Теперь вы можете войти.');
+            return $this->redirect(['login']);
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+    
+   public function actionRequestpasswordreset()
+    {
+        $model = new PasswordResetRequestForm();
+        
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Проверьте свою электронную почту для дальнейших инструкций.');
+                return $this->goHome();
+            } else {
+                Yii::$app->session->setFlash('error', 'Извините, мы не можем сбросить пароль для указанного email.');
+            }
+        }
+        
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
+    }
+    
+    /**
+     * Сброс пароля.
+     */
+    public function actionResetPassword($token)
+    {
+         try {
+             $model = new ResetPasswordForm($token);
+         } catch (InvalidArgumentException $e) {
+             Yii::$app->session->setFlash('error', $e->getMessage());
+             return $this->redirect(['request-password-reset']);
+         }
+         
+         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+             Yii::$app->session->setFlash('success', 'Новый пароль сохранен.');
+             return $this->redirect(['login']);
+         }
+         
+         return $this->render('resetPassword', [
+             'model' => $model,
+         ]);
+     }
+     
+     
+     public function actionCp()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['login']);
+        }
+    
+    $user = Yii::$app->user->identity;
+    $user = User::findOne(['id' => $user->id]);
+    
+    $activeEvent = $this->getActiveEvent();
+    
+    $isParticipant = false;
+    $inBattle = false;
+    $currentBattle = null;
+    
+    // ВАЖНО: проверяем $activeEvent перед использованием
+    if ($activeEvent && $user) {
+        $participant = EventParticipants::find()
+            ->where(['event_id' => $activeEvent->id, 'user_id' => $user->id])
+            ->one();
+        
+        if ($participant) {
+            $isParticipant = true;
+            $inBattle = true;
+        }
+        
+        if ($activeEvent->battle_id) {
+            $currentBattle = Battle::findOne(['id' => $activeEvent->battle_id]);
+            if ($currentBattle && $currentBattle->started == 2) {
+                $inBattle = false;
+            }
+        }
+    }
+    
+    return $this->render('cp', [
+        'user' => $user,
+        'activeEvent' => $activeEvent,
+        'isParticipant' => $isParticipant,
+        'inBattle' => $inBattle,
+        'currentBattle' => $currentBattle,
+    ]);
+}
+    public function actionStr(){
+         return $this->render("str");
+     }
+
+     public function actionIndex(){
+         return $this->actionCp();
+     }
+}
+?>

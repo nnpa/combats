@@ -1,0 +1,885 @@
+.inventory * {
+    padding: 0px;
+    margin: 0px;
+}
+
+.inventory-left {
+    float: left;
+    width: 60px;
+}
+
+.inventory-center {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+    height: 280px;
+    background: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('/img/inv/player.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #7b5a2f;
+    border-radius: 14px;
+    box-shadow: inset 0 0 10px rgba(255,215,120,.06), 0 0 10px rgba(0,0,0,.6);
+    flex-shrink: 0;
+}
+
+.inventory-right {
+    float: left;
+    width: 60px;
+}
+
+.earrings {
+    width: 60px;
+    height: 20px;
+}
+
+.amulet {
+    width: 60px;
+    height: 20px;
+}
+
+.brasers {
+    width: 60px;
+    height: 40px;
+}
+
+.head {
+    width: 60px;
+    height: 60px;
+}
+
+.chest {
+    width: 60px;
+    height: 80px;
+}
+
+.belt {
+    width: 60px;
+    height: 40px;
+}
+
+.weapon {
+    width: 60px;
+    height: 60px;
+}
+
+/* Стили для родительского контейнера */
+.rings {
+    display: flex;
+    float: top;
+}
+
+/* Стили для самих колец */
+.ring {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gloves {
+    width: 60px;
+    height: 40px;
+}
+
+.shild {
+    width: 60px;
+    height: 60px;
+}
+
+.leg {
+    width: 60px;
+    height: 80px;
+}
+
+.boots {
+    width: 60px;
+    height: 40px;
+}
+
+.clearfix {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.stats {
+    font-size: 12px;
+    color: #222;
+    font-family: Verdana, Times, Helvetica, Tahoma;
+}
+
+/* ОБЩИЙ ФОН */
+.shop-page {
+    min-height: 100vh;
+}
+
+/* ЛЕВОЕ МЕНЮ */
+.shop-menu {
+    background: linear-gradient(to bottom, #3a2817, #21150d);
+    border: 2px solid #7c5a2d;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,.7);
+}
+
+.shop-menu-title {
+    text-align: center;
+    font-size: 26px;
+    color: #ffcf75;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px #000;
+}
+
+.shop-link {
+    display: block;
+    text-decoration: none;
+    color: #e9d4a4;
+    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    transition: .2s;
+}
+
+.shop-link:hover {
+    background: #4c3218;
+    color: #ffd47d;
+    transform: translateX(4px);
+}
+
+/* КАРТОЧКА */
+.item-card {
+    background: linear-gradient(to bottom, #342315, #1e140d);
+    border: 2px solid #7b5930;
+    border-radius: 22px;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 0 0 20px rgba(0,0,0,.7), inset 0 0 12px rgba(255,220,120,.05);
+}
+
+/* НАЗВАНИЕ */
+.item-title {
+    text-align: center;
+    font-size: 24px;
+    color: #ffd27b;
+    font-weight: bold;
+    margin-bottom: 18px;
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* КАРТИНКА */
+.item-image-wrapper {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.item-image {
+    image-rendering: pixelated;
+    border-radius: 16px;
+    border: 2px solid #7d5c35;
+    background: #120d09;
+    padding: 6px;
+    box-shadow: 0 0 15px rgba(0,0,0,.7);
+}
+
+/* БЛОКИ */
+.requirements-block,
+.gives-block {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+/* ТРЕБОВАНИЯ */
+.requirements-block {
+    background: linear-gradient(to bottom, #41291a, #28170d);
+    border: 1px solid #6f4527;
+}
+
+/* ДАЕТ */
+.gives-block {
+    background: linear-gradient(to bottom, #1f3321, #132014);
+    border: 1px solid #315032;
+}
+
+/* ЗАГОЛОВОК */
+.block-header {
+    text-align: center;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.require-header {
+    background: #5b361d;
+    color: #ffcb8a;
+}
+
+.gives-header {
+    background: #295029;
+    color: #9eff9e;
+}
+
+/* КОНТЕНТ */
+.block-content {
+    padding: 12px;
+}
+
+/* СТРОКИ */
+.stat-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.04);
+    font-size: 14px;
+}
+
+/* ЦВЕТА */
+.stat-green {
+    color: #8fff8f;
+}
+
+.stat-red {
+    color: #ff8f75;
+}
+
+.stat-blue {
+    color: #7fc8ff;
+}
+
+.stat-purple {
+    color: #c79dff;
+}
+
+.stat-yellow {
+    color: #ffd96f;
+}
+
+/* КНОПКА */
+.buy-button {
+    background: linear-gradient(to bottom, #8b5a22, #5b3515);
+    border: 2px solid #d2a45b;
+    border-radius: 14px;
+    color: #fff1cc;
+    padding: 10px 28px;
+    font-weight: bold;
+    transition: .2s;
+}
+
+.buy-button:hover {
+    background: linear-gradient(to bottom, #a56a2b, #6a3d18);
+    transform: scale(1.05);
+}
+
+.stat-need {
+    color: white;
+}
+
+body {
+    background: #181818;
+    font-family: Verdana, sans-serif;
+}
+
+/* ОСНОВА */
+.inventory-wrapper {
+    width: 280px;
+    margin: 30px auto;
+    background: linear-gradient(to bottom, #2b1d12, #17110c);
+    border: 2px solid #7b5a2f;
+    border-radius: 18px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,.8);
+}
+
+/* INVENTORY */
+.inventory {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* КОЛОНКИ */
+.inventory-left,
+.inventory-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ПЕРСОНАЖ */
+.inventory-center {
+    width: 120px;
+    height: 280px;
+    background: linear-gradient(rgba(0,0,0,.35), rgba(0,0,0,.35)), url('/img/inv/player.png');
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #7b5a2f;
+    border-radius: 14px;
+    box-shadow: inset 0 0 10px rgba(255,215,120,.06), 0 0 10px rgba(0,0,0,.6);
+}
+
+/* СЛОТЫ */
+.head,
+.weapon,
+.shild {
+    width: 60px;
+    height: 60px;
+}
+
+.chest,
+.leg {
+    width: 60px;
+    height: 80px;
+}
+
+.brasers,
+.belt,
+.gloves,
+.boots {
+    width: 60px;
+    height: 40px;
+}
+
+.earrings,
+.amulet {
+    width: 60px;
+    height: 20px;
+}
+
+/* ОБЩИЙ СТИЛЬ ДЛЯ СЛОТОВ */
+.head,
+.weapon,
+.shild,
+.chest,
+.leg,
+.brasers,
+.belt,
+.gloves,
+.boots,
+.earrings,
+.amulet,
+.ring {
+    background: linear-gradient(to bottom, #39281c, #22160f);
+    border: 1px solid #8d6737;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .2s;
+    box-shadow: inset 0 0 6px rgba(255,220,120,.05), 0 0 5px rgba(0,0,0,.4);
+}
+
+/* СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ В СЛОТАХ - ОСНОВНОЕ ИСПРАВЛЕНИЕ */
+.head img,
+.weapon img,
+.shild img,
+.chest img,
+.leg img,
+.brasers img,
+.belt img,
+.gloves img,
+.boots img,
+.earrings img,
+.amulet img,
+.ring img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 0 !important;  /* Убираем скругление */
+    background: white;            /* Белый фон для изображений без фона */
+    image-rendering: pixelated;
+    display: block;
+}
+
+/* ДЛЯ СЛОТОВ БЕЗ ИЗОБРАЖЕНИЙ (заглушки) */
+.head img[src*="/img/inv/"],
+.weapon img[src*="/img/inv/"],
+.shild img[src*="/img/inv/"],
+.chest img[src*="/img/inv/"],
+.leg img[src*="/img/inv/"],
+.brasers img[src*="/img/inv/"],
+.belt img[src*="/img/inv/"],
+.gloves img[src*="/img/inv/"],
+.boots img[src*="/img/inv/"],
+.earrings img[src*="/img/inv/"],
+.amulet img[src*="/img/inv/"],
+.ring img[src*="/img/inv/"] {
+    background: transparent;  /* Для дефолтных иконок инвентаря фон прозрачный */
+}
+
+/* HOVER */
+.head:hover,
+.weapon:hover,
+.shild:hover,
+.chest:hover,
+.leg:hover,
+.brasers:hover,
+.belt:hover,
+.gloves:hover,
+.boots:hover,
+.earrings:hover,
+.amulet:hover,
+.ring:hover {
+    transform: scale(1.05);
+    border-color: #d9b36b;
+    box-shadow: 0 0 10px rgba(255,215,120,.25);
+}
+
+/* ИЗОБРАЖЕНИЯ В ИНВЕНТАРЕ (общие) */
+.inventory img {
+    image-rendering: pixelated;
+    display: block;
+}
+
+/* КОЛЬЦА */
+.rings {
+    display: flex;
+    gap: 4px;
+}
+
+.ring {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+}
+
+/* СТАТЫ */
+.stats {
+    margin-top: 15px;
+    background: linear-gradient(to bottom, #24170f, #18100a);
+    border: 1px solid #7b5a2f;
+    border-radius: 14px;
+    padding: 10px;
+    color: #d8c08a;
+    font-size: 12px;
+    box-shadow: inset 0 0 8px rgba(255,220,120,.04);
+}
+
+.stats-title {
+    text-align: center;
+    color: #ffd27b;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 3px #000;
+}
+
+.stat-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.stat-line:last-child {
+    border-bottom: none;
+}
+
+.stat-value {
+    color: #ffcf72;
+    font-weight: bold;
+}
+
+.button-plus {
+    background: linear-gradient(to bottom, #8fff8f, #006400);
+    border: 1px solid #d2a45b;
+    color: #fff1cc;
+    padding: 8px 18px;
+    font-weight: bold;
+    transition: .2s;
+    margin-left: 2px;
+}
+
+/* ========== РАСПОЛОЖЕНИЕ ПЕРСОНАЖА СЛЕВА, ПРЕДМЕТОВ СПРАВА ========== */
+
+/* Главный контейнер - делаем flex строкой */
+body > div:first-child {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: flex-start !important;
+    gap: 30px !important;
+    margin-top: 20px !important;
+}
+
+/* Блок с персонажем - фиксированная ширина слева */
+body > div:first-child > .left {
+    flex-shrink: 0 !important;
+    width: auto !important;
+}
+
+/* Блок с предметами - занимает всё оставшееся место справа */
+body > div:first-child > .right {
+    flex: 1 !important;
+    min-width: 300px !important;
+}
+
+/* Убираем центрирование инвентаря персонажа */
+.inventory-wrapper {
+    margin: 0 !important;
+}
+
+/* Убираем лишние float у колонок инвентаря */
+.inventory-left,
+.inventory-right {
+    float: none !important;
+}
+
+.stats {
+    margin-top: 15px;
+}
+
+/* ========== СТИЛИ ДЛЯ ЭЛИКСИРОВ НА АВАТАРЕ ========== */
+.inventory-center {
+    position: relative;
+    display: inline-block;
+}
+
+.inventory-center > .avatar {
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+/* Контейнер с эликсирами */
+.elixir-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 2;
+    max-width: calc(100% - 20px);
+}
+
+.elixir-item {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.elixir-icon {
+    width: 50px;
+    height: 30px;
+    border: 2px solid white;
+    background: rgba(0, 0, 0, 0.6);
+    object-fit: cover;
+}
+
+.elixir-timer {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #ffd700;
+    font-size: 9px;
+    padding: 2px 4px;
+    border-radius: 10px;
+    white-space: nowrap;
+    z-index: 3;
+}
+
+/* ========== СТИЛИ ДЛЯ ВКЛАДОК ========== */
+.tabs-container {
+    background: linear-gradient(to bottom, #2b1d12, #17110c);
+    border: 2px solid #7b5a2f;
+    border-radius: 18px;
+    padding: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,.8);
+}
+
+.tabs-header {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #7b5a2f;
+    padding-bottom: 10px;
+}
+
+.tab-button {
+    background: linear-gradient(to bottom, #3a2817, #21150d);
+    border: 1px solid #7b5a2f;
+    border-radius: 12px 12px 0 0;
+    color: #d8c08a;
+    padding: 10px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 5px;
+}
+
+.tab-button:hover {
+    background: linear-gradient(to bottom, #4c3218, #2a1a0e);
+    color: #ffd27b;
+    transform: translateY(-2px);
+}
+
+.tab-button.active {
+    background: linear-gradient(to bottom, #5b3a1d, #3a2210);
+    color: #ffd27b;
+    border-bottom: 2px solid #d2a45b;
+    box-shadow: inset 0 1px 0 rgba(255,215,120,.2), 0 0 10px rgba(255,215,120,.15);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стили для заглушки заклинаний */
+.spells-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+/* Адаптация грида внутри вкладок */
+.tab-content .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.tab-content .col-sm-6.col-xl-4 {
+    flex: 0 0 calc(33.333% - 20px);
+    min-width: 250px;
+}
+
+@media (max-width: 768px) {
+    .tab-button {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+    
+    .tab-content .col-sm-6.col-xl-4 {
+        flex: 0 0 calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-content .col-sm-6.col-xl-4 {
+        flex: 0 0 100%;
+    }
+}
+
+/* ========== ПЛАШКА С ИНФОРМАЦИЕЙ О ПЕРСОНАЖЕ ========== */
+.player-info-card {
+    background: linear-gradient(to bottom, #2b1d12, #17110c);
+    border: 2px solid #7b5a2f;
+    border-radius: 18px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 20px rgba(0,0,0,.8);
+}
+
+.player-info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.player-info-item {
+    background: rgba(0,0,0,0.4);
+    border-radius: 12px;
+    padding: 6px 12px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.player-info-label {
+    font-size: 10px;
+    color: #b89a6a;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.player-info-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffd27b;
+}
+
+.player-info-value-small {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffd27b;
+}
+
+.exp-bar-container {
+    background: #22160f;
+    border-radius: 10px;
+    height: 6px;
+    width: 100%;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.exp-bar-fill {
+    background: linear-gradient(to right, #8b5a22, #d2a45b);
+    width: 0%;
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+/* Дополнительные стили для инвентаря */
+.head, .weapon, .shild, .chest, .leg, .brasers, .belt, .gloves, .boots, .earrings, .amulet, .ring {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.head:hover, .weapon:hover, .shild:hover, .chest:hover, .leg:hover, 
+.brasers:hover, .belt:hover, .gloves:hover, .boots:hover, 
+.earrings:hover, .amulet:hover, .ring:hover {
+    transform: scale(1.05);
+    border-color: #d9b36b;
+    box-shadow: 0 0 10px rgba(255,215,120,.25);
+    background: linear-gradient(to bottom, #4c3828, #2e1f15);
+}
+
+/* Индикатор, что слот не пустой */
+.head:has(img:not([src*="/img/inv/"])),
+.weapon:has(img:not([src*="/img/inv/"])),
+.shild:has(img:not([src*="/img/inv/"])),
+.chest:has(img:not([src*="/img/inv/"])),
+.leg:has(img:not([src*="/img/inv/"])),
+.brasers:has(img:not([src*="/img/inv/"])),
+.belt:has(img:not([src*="/img/inv/"])),
+.gloves:has(img:not([src*="/img/inv/"])),
+.boots:has(img:not([src*="/img/inv/"])),
+.earrings:has(img:not([src*="/img/inv/"])),
+.amulet:has(img:not([src*="/img/inv/"])),
+.ring:has(img:not([src*="/img/inv/"])) {
+    border: 2px solid #d9b36b;
+    box-shadow: 0 0 8px rgba(255,215,120,.4);
+}
+
+/* Обеспечиваем правильное отображение картинок в слотах */
+.head img, .weapon img, .shild img, .chest img, .leg img, 
+.brasers img, .belt img, .gloves img, .boots img, 
+.earrings img, .amulet img, .ring img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #fff;
+    image-rendering: pixelated;
+}
+
+/* Для пустых слотов делаем фон прозрачным */
+.head img[src*="/img/inv/"], .weapon img[src*="/img/inv/"], 
+.shild img[src*="/img/inv/"], .chest img[src*="/img/inv/"], 
+.leg img[src*="/img/inv/"], .brasers img[src*="/img/inv/"], 
+.belt img[src*="/img/inv/"], .gloves img[src*="/img/inv/"], 
+.boots img[src*="/img/inv/"], .earrings img[src*="/img/inv/"], 
+.amulet img[src*="/img/inv/"], .ring img[src*="/img/inv/"] {
+    background: transparent;
+    opacity: 0.7;
+}
+
+/* БЛОК ТРЕБОВАНИЙ И ДАЁТ (исправлено для читаемости) */
+.requirements-block {
+    background: linear-gradient(to bottom, #2a1a0e, #1a0f08);
+    border: 1px solid #8b5a2b;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.require-header {
+    background: #5b361d;
+    color: #ffd27b;
+    text-align: center;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.gives-block {
+    background: linear-gradient(to bottom, #1a2a1a, #0f1a0f);
+    border: 1px solid #4a8a3a;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.gives-header {
+    background: #2d5a2d;
+    color: #aaffaa;
+    text-align: center;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.block-content {
+    padding: 12px;
+}
+
+/* СТРОКИ СТАТОВ */
+.requirements-block .stat-line,
+.gives-block .stat-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    margin-bottom: 4px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+}
+
+/* НАЗВАНИЯ СТАТОВ (левая часть) */
+.requirements-block .stat-line span:first-child,
+.gives-block .stat-line span:first-child {
+    color: #f0e6d0;
+    font-weight: 500;
+}
+
+/* ЗНАЧЕНИЯ В ТРЕБОВАНИЯХ */
+.requirements-block .stat-red {
+    color: #ffaa88;
+    font-weight: bold;
+}
+
+/* ЗНАЧЕНИЯ В ДАЁТ */
+.gives-block .stat-green {
+    color: #88ff88;
+    font-weight: bold;
+}

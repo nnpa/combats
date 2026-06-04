@@ -1,0 +1,430 @@
+/* ========== ПОЧТА - СТИЛИ В ТОМ ЖЕ СТИЛЕ ЧТО И ИНВЕНТАРЬ ========== */
+
+/* Основной контейнер почты */
+.mail-container {
+    background: linear-gradient(to bottom, #2b1d12, #17110c);
+    border: 2px solid #7b5a2f;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0,0,0,.8);
+    margin: 20px;
+}
+
+/* Заголовки */
+.mail-title {
+    text-align: center;
+    font-size: 26px;
+    color: #ffcf75;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px #000;
+}
+
+/* Панели */
+.mail-panel {
+    background: linear-gradient(to bottom, #342315, #1e140d);
+    border: 2px solid #7b5930;
+    border-radius: 22px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,.7), inset 0 0 12px rgba(255,220,120,.05);
+}
+
+.mail-panel-header {
+    background: linear-gradient(to bottom, #5b3a1d, #3a2210);
+    padding: 12px 18px;
+    border-bottom: 2px solid #7b5a2f;
+}
+
+.mail-panel-header h3 {
+    color: #ffd27b !important;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 1px 1px 3px #000;
+}
+
+.mail-panel-body {
+    padding: 20px;
+}
+
+/* Форма отправки */
+.mail-form-group {
+    margin-bottom: 20px;
+}
+
+.mail-form-group label {
+    display: block;
+    color: #d8c08a;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 1px 1px 2px #000;
+}
+
+.mail-input {
+    width: 100%;
+    background: linear-gradient(to bottom, #39281c, #22160f);
+    border: 1px solid #8d6737;
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #ffd27b;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 0 6px rgba(255,220,120,.05), 0 0 5px rgba(0,0,0,.4);
+}
+
+.mail-input:focus {
+    outline: none;
+    border-color: #d2a45b;
+    box-shadow: 0 0 10px rgba(255,215,120,.25);
+}
+
+.mail-input::placeholder {
+    color: #8a6e4a;
+}
+
+/* Кнопки - в стиле инвентаря как buy-button */
+.mail-btn {
+    background: linear-gradient(to bottom, #8b5a22, #5b3515);
+    border: 2px solid #d2a45b;
+    border-radius: 14px;
+    color: #fff1cc;
+    padding: 10px 28px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+}
+
+.mail-btn:hover {
+    background: linear-gradient(to bottom, #a56a2b, #6a3d18);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(255,215,120,.25);
+}
+
+.mail-btn:disabled {
+    opacity: 0.6;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* Кнопка принятия - зеленая как gives-block */
+.mail-btn-success {
+    background: linear-gradient(to bottom, #2d6a2d, #1a4a1a);
+    border-color: #6f9e6f;
+    color: #9eff9e;
+}
+
+.mail-btn-success:hover {
+    background: linear-gradient(to bottom, #3a8a3a, #2a5a2a);
+    transform: scale(1.05);
+}
+
+/* Кнопка отклонения - красная как require-header */
+.mail-btn-danger {
+    background: linear-gradient(to bottom, #8b3a2a, #5b2515);
+    border-color: #c46a4a;
+    color: #ff8f75;
+}
+
+.mail-btn-danger:hover {
+    background: linear-gradient(to bottom, #a54a35, #6b3018);
+    transform: scale(1.05);
+}
+
+/* Список писем */
+.mail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.mail-item {
+    background: linear-gradient(to bottom, #342315, #1e140d);
+    border: 1px solid #7b5930;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.mail-item:hover {
+    transform: translateX(4px);
+    border-color: #d2a45b;
+    box-shadow: 0 0 15px rgba(255,215,120,.15);
+}
+
+.mail-item-body {
+    padding: 15px;
+}
+
+.mail-item-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.mail-item-image {
+    flex-shrink: 0;
+    width: 80px;
+    text-align: center;
+}
+
+.mail-item-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    background: #120d09;
+    border: 2px solid #7d5c35;
+    border-radius: 12px;
+    padding: 5px;
+    image-rendering: pixelated;
+}
+
+.mail-item-info {
+    flex: 1;
+    min-width: 200px;
+}
+
+.mail-info-line {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+.mail-info-label {
+    font-weight: bold;
+    color: #b89a6a;
+    width: 70px;
+    flex-shrink: 0;
+}
+
+.mail-info-value {
+    color: #ffd27b;
+}
+
+.mail-info-value-from {
+    color: #7fc8ff;
+}
+
+.mail-info-value-item {
+    color: #c79dff;
+}
+
+.mail-info-value-price {
+    color: #ffd96f;
+    font-weight: bold;
+}
+
+.mail-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* Список предметов для отправки */
+.items-list {
+    max-height: 350px;
+    overflow-y: auto;
+    background: #120d09;
+    border-radius: 12px;
+    padding: 10px;
+}
+
+/* Скроллбар для списка предметов */
+.items-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.items-list::-webkit-scrollbar-track {
+    background: #22160f;
+    border-radius: 10px;
+}
+
+.items-list::-webkit-scrollbar-thumb {
+    background: #8d6737;
+    border-radius: 10px;
+}
+
+.items-list::-webkit-scrollbar-thumb:hover {
+    background: #d2a45b;
+}
+
+/* Radio предметы */
+.item-radio {
+    background: linear-gradient(to bottom, #39281c, #22160f);
+    border: 1px solid #8d6737;
+    border-radius: 12px;
+    margin-bottom: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.item-radio:hover {
+    background: linear-gradient(to bottom, #4c3218, #2a1a0e);
+    border-color: #d2a45b;
+    transform: translateX(3px);
+}
+
+.item-radio.selected {
+    background: linear-gradient(to bottom, #5b3a1d, #3a2210);
+    border-color: #d2a45b;
+    box-shadow: 0 0 10px rgba(255,215,120,.15);
+}
+
+.item-radio label {
+    display: block;
+    cursor: pointer;
+    margin: 0;
+}
+
+.item-radio input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle;
+    accent-color: #d2a45b;
+}
+
+.item-radio img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 10px;
+    background: #120d09;
+    border-radius: 8px;
+    padding: 3px;
+    image-rendering: pixelated;
+}
+
+.item-radio strong {
+    color: #ffd27b;
+    vertical-align: middle;
+}
+
+.item-radio .text-muted {
+    color: #b89a6a;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+/* Сообщения (алерты) */
+.mail-alert-info {
+    background: linear-gradient(to bottom, #1f3321, #132014);
+    border: 1px solid #315032;
+    border-radius: 12px;
+    padding: 12px;
+    color: #9eff9e;
+    text-align: center;
+}
+
+.mail-alert-warning {
+    background: linear-gradient(to bottom, #41291a, #28170d);
+    border: 1px solid #6f4527;
+    border-radius: 12px;
+    padding: 12px;
+    color: #ffcb8a;
+    text-align: center;
+}
+
+.mail-alert-danger {
+    background: linear-gradient(to bottom, #5b2a1a, #3a1810);
+    border: 1px solid #8b4527;
+    border-radius: 12px;
+    padding: 12px;
+    color: #ff8f75;
+    text-align: center;
+}
+
+/* Отсутствие изображения */
+.mail-no-image {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(to bottom, #39281c, #22160f);
+    border: 2px solid #7d5c35;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #b89a6a;
+    font-size: 11px;
+}
+
+/* Кнопка отправки в заголовке */
+.mail-header-btn {
+    background: linear-gradient(to bottom, #8b5a22, #5b3515);
+    border: 2px solid #d2a45b;
+    border-radius: 14px;
+    color: #fff1cc;
+    padding: 8px 20px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    float: right;
+}
+
+.mail-header-btn:hover {
+    background: linear-gradient(to bottom, #a56a2b, #6a3d18);
+    transform: scale(1.02);
+}
+
+.clearfix {
+    clear: both;
+}
+
+/* Помощь при валидации */
+.help-block {
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.text-success {
+    color: #9eff9e;
+}
+
+.text-danger {
+    color: #ff8f75;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    .mail-container {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .mail-item-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .mail-item-image {
+        width: auto;
+    }
+    
+    .mail-info-line {
+        justify-content: center;
+    }
+    
+    .mail-actions {
+        justify-content: center;
+    }
+    
+    .mail-panel-header h3 {
+        font-size: 18px;
+        text-align: center;
+    }
+    
+    .mail-header-btn {
+        float: none;
+        display: block;
+        margin-top: 10px;
+        text-align: center;
+    }
+}

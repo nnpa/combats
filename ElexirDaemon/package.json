@@ -1,0 +1,14 @@
+{
+  "name": "elixir-daemon",
+  "version": "1.0.0",
+  "description": "Elixir expiration daemon",
+  "main": "daemon.js",
+  "scripts": {
+    "start": "node daemon.js",
+    "dev": "nodemon daemon.js"
+  },
+  "dependencies": {
+    "mysql2": "^3.6.0",
+    "dotenv": "^16.3.1"
+  }
+}
