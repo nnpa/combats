@@ -87,11 +87,14 @@
                 padding-top: 60px;
             }
         }
+        .image-container {
+    margin-top: 120px; /* добавить отступ сверху */
+}
     </style>
 </head>
 <body>
     <div class="image-container">
-        <img src="/img/str.png" alt="Страшилкина улица" class="scene-image" id="mainImage">
+        <img src="/img/ul.png" alt="Страшилкина улица" class="scene-image" id="mainImage">
         <div class="click-layer" id="clickLayer"></div>
     </div>
 
@@ -104,11 +107,11 @@
         
         // Области с координатами (в оригинальных пикселях картинки)
         const areas = [
-            { name: 'Почта', x1: 409, y1: 366, x2: 514, y2: 437, href: '/mail/index', tooltip: '📬 Почта' },
-            { name: 'Аукцион', x1: 383, y1: 95, x2: 471, y2: 158, href: '/auction/index', tooltip: '💰 Аукцион' },
-            { name: 'Кланы', x1: 198, y1: 303, x2: 375, y2: 420, href: '/clan/index', tooltip: '🏰 Управление кланами' },
-            { name: 'ЦП', x1: 747, y1: 548, x2: 932, y2: 645, href: '/site/cp', tooltip: '🏛️ Центральная площадь' },
-            { name: 'Магазин', x1: 550, y1: 200, x2: 650, y2: 280, href: '/shop/repa', tooltip: '🛒 Магазин' },
+            { name: 'Почта', x1: 321, y1: 359, x2: 440, y2: 411, href: '/mail/index', tooltip: '📬 Почта' },
+            { name: 'Аукцион', x1: 291, y1: 98, x2: 395, y2: 156, href: '/auction/index', tooltip: '💰 Аукцион' },
+            { name: 'Кланы', x1: 104, y1: 299, x2: 280, y2: 387, href: '/clan/index', tooltip: '🏰 Управление кланами' },
+            { name: 'ЦП', x1: 806, y1: 482, x2: 996, y2: 549, href: '/site/cp', tooltip: '🏛️ Центральная площадь' },
+            { name: 'Магазин', x1: 498, y1: 90, x2: 582, y2: 230, href: '/shop/repa', tooltip: '🛒 Магазин' },
             
         ];
         

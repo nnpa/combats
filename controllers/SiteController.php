@@ -15,9 +15,38 @@ use app\models\EventParticipants;
 use app\models\Chat;
 use app\models\ResetPasswordForm;
 use app\models\PasswordResetRequestForm;
+use app\models\Item;
+use yii\helpers\FileHelper;
 
 class SiteController extends AppController
 {
+    public function actionFolder(){
+        // Все уникальные пары (класс, уровень)
+$items = Item::find()
+    ->select(['class', 'n_level'])
+    ->where(['is', 'class', null])->orWhere(['!=', 'class', '']) // исключаем NULL и пустые строки
+    ->distinct()
+    ->all();
+
+$basePath = Yii::getAlias('@webroot') . '/generated_items/';
+
+foreach ($items as $item) {
+    if (empty($item->class) || empty($item->n_level)) continue;
+
+    // Формируем имя папки: например "Критовик_2ур"
+    $folderName = $item->class . '_' . $item->n_level . 'ур';
+    $fullPath = $basePath . $folderName;
+
+    if (!is_dir($fullPath)) {
+        FileHelper::createDirectory($fullPath, 0777);
+        echo "✅ Создана папка: {$folderName}\n";
+    } else {
+        echo "⚠️ Папка уже существует: {$folderName}\n";
+    }
+}
+
+echo "\n🎉 Готово! Все папки созданы.\n";
+    }
     /**
      * Настройка правил доступа (Access Control).
      * Гость (неавторизованный) может видеть страницу входа.

@@ -80,7 +80,6 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
     // Пункты для авторизованных пользователей
     if (!Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Базар', 'url' => ['/auction/index']];
         $menuItems[] = ['label' => '🏛️ На площадь', 'url' => ['/site/cp']];
         $menuItems[] = ['label' => '🎒 Инвентарь', 'url' => ['/inventory/index']];
         $menuItems[] = [
