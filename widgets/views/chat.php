@@ -397,6 +397,14 @@ $height = $user->chat_height ?? 300;
         padding: 1px 4px;
     }
 }
+.clan-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #ffd700;
+    background: #2c1810;
+}
 </style>
 
 <script>
@@ -444,7 +452,7 @@ function loadMessages() {
                 }
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error loading messages:', error));
 }
 
 function loadUsers() {
@@ -461,19 +469,35 @@ function loadUsers() {
             var html = '';
             for (var i = 0; i < users.length; i++) {
                 var user = users[i];
+                var clanIconHtml = '';
+                if (user.clan_img) {
+                    clanIconHtml = '<img src="' + user.clan_img + '" class="clan-icon" alt="clan" onerror="this.style.display=\'none\'">';
+                }
                 html += '<div class="user-item">';
+                html += '<div style="display: flex; align-items: center; gap: 6px;">';
+                html += clanIconHtml;
                 html += '<a href="/site/info?username=' + encodeURIComponent(user.username) + '" target="_blank" class="user-name">' + escapeHtml(user.username) + '</a>';
+                html += '</div>';
                 html += '<div style="display: flex; align-items: center; gap: 5px;">';
                 html += '<span class="user-level">[' + user.level + ']</span>';
                 if (user.id !== chatCurrentUser) {
-                    html += '<button class="private-btn" onclick="setPrivateReply(' + user.id + ', \'' + escapeHtml(user.username) + '\')">Приват</button>';
+                    html += '<button class="private-btn" data-user-id="' + user.id + '" data-username="' + escapeHtml(user.username) + '">Приват</button>';
                 }
                 html += '</div>';
                 html += '</div>';
             }
             container.innerHTML = html;
+            
+            // Привязываем обработчики для кнопок приватных сообщений
+            document.querySelectorAll('.private-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    var userId = this.getAttribute('data-user-id');
+                    var username = this.getAttribute('data-username');
+                    setPrivateReply(userId, username);
+                });
+            });
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error loading users:', error));
 }
 
 function setPrivateReply(userId, username) {
@@ -512,7 +536,7 @@ function sendMessage() {
             alert('Ошибка: ' + data.error);
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('Error sending message:', error));
 }
 
 function escapeHtml(text) {
@@ -530,7 +554,7 @@ function saveChatState(height, collapsed) {
             'X-CSRF-Token': '<?= Yii::$app->request->csrfToken ?>'
         },
         body: 'height=' + height + '&collapsed=' + collapsed
-    });
+    }).catch(error => console.error('Error saving chat state:', error));
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -555,12 +579,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Кнопка сворачивания/разворачивания
     var minimizeBtn = document.getElementById('chat-minimize');
     var chatWidget = document.getElementById('chat-widget');
     var chatBody = document.getElementById('chat-body');
-    var currentCollapsed = chatWidget.getAttribute('data-collapsed') === '1';
-    
-    if (minimizeBtn) {
+    if (minimizeBtn && chatWidget && chatBody) {
+        var currentCollapsed = chatWidget.getAttribute('data-collapsed') === '1';
+        
         minimizeBtn.addEventListener('click', function() {
             currentCollapsed = !currentCollapsed;
             var newHeight = currentCollapsed ? 40 : <?= $height ?>;
@@ -569,12 +594,13 @@ document.addEventListener('DOMContentLoaded', function() {
             minimizeBtn.textContent = currentCollapsed ? '▲' : '▼';
             saveChatState(newHeight, currentCollapsed ? 1 : 0);
         });
+    } else {
+        console.error('Minimize button or chat elements not found');
     }
     
     var smileyToggle = document.getElementById('smiley-toggle');
     var smileysPanel = document.getElementById('smileys-panel');
-    
-    if (smileyToggle) {
+    if (smileyToggle && smileysPanel) {
         smileyToggle.addEventListener('click', function() {
             smileysPanel.classList.toggle('show');
         });
@@ -584,8 +610,8 @@ document.addEventListener('DOMContentLoaded', function() {
     for (var i = 0; i < smileyBtns.length; i++) {
         smileyBtns[i].addEventListener('click', function() {
             var smiley = this.getAttribute('data-smiley');
-            chatInput.value += smiley;
-            chatInput.focus();
+            if (chatInput) chatInput.value += smiley;
+            if (chatInput) chatInput.focus();
         });
     }
     

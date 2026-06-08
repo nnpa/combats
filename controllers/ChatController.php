@@ -154,31 +154,34 @@ class ChatController extends Controller
     return ['success' => false, 'error' => 'Ошибка отправки'];
 }
     
-    // Получение списка онлайн пользователей
-    public function actionGetUsers()
-    {
-        Yii::$app->response->format = Response::FORMAT_JSON;
-        
-        $timeLimit = time() - 300; // 5 минут
-        
-        $users = User::find()
-            ->where(['>', 'isOnline', $timeLimit])
-            ->andWhere(['bot' => 0])
-            ->orderBy(['username' => SORT_ASC])
-            ->all();
-        
-        $result = [];
-        foreach ($users as $user) {
-            $result[] = [
-                'id' => $user->id,
-                'username' => $user->username,
-                'level' => $user->level,
-                'isOnline' => $user->isOnline,
-            ];
-        }
-        
-        return $result;
+ public function actionGetUsers()
+{
+    Yii::$app->response->format = Response::FORMAT_JSON;
+    
+    $timeLimit = time() - 300; // 5 минут
+    
+    $users = User::find()
+        ->select(['user.id', 'user.username', 'user.level', 'user.isOnline', 'clan.img as clan_img'])
+        ->leftJoin('clan', 'clan.id = user.clan_id')
+        ->where(['>', 'user.isOnline', $timeLimit])
+        ->andWhere(['user.bot' => 0])
+        ->orderBy(['user.username' => SORT_ASC])
+        ->asArray()
+        ->all();
+    
+    $result = [];
+    foreach ($users as $user) {
+        $result[] = [
+            'id' => $user['id'],
+            'username' => $user['username'],
+            'level' => $user['level'],
+            'isOnline' => $user['isOnline'],
+            'clan_img' => $user['clan_img'] ?? null, // путь к иконке клана или null
+        ];
     }
+    
+    return $result;
+}
     
     // Сохранение состояния чата
     public function actionSaveState()
