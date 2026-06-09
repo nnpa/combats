@@ -23,9 +23,20 @@ if ($user->clan_id && $user->clan_id > 0) {
 // Расчет винрейта
 $totalBattles = $user->win + $user->loose;
 $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
+
+// Функция для получения tooltip текста
+function getTooltipText($item) {
+    if (!$item) return '';
+    $tooltip = '';
+    if (!empty($item->name)) {
+        $tooltip .= $item->name;
+    }
+    if (!empty($item->description)) {
+        $tooltip .= ($tooltip ? "\n" : '') . $item->description;
+    }
+    return $tooltip;
+}
 ?>
-
-
 
 <!-- Инвентарь персонажа -->
 <div class="inventory-wrapper">
@@ -33,7 +44,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
         
         <!-- ЛЕВАЯ КОЛОНКА -->
         <div class="inventory-left">
-            <div class="head">
+            <div class="head" <?php if($user->helm !== null && $user->helm > 0): $item = Inventory::findOne($user->helm); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->helm !== null && $user->helm > 0): ?>
                     <?php $item = Inventory::findOne($user->helm); ?>
                     <img src="<?= $item->img ?>" alt="Шлем">
@@ -42,7 +53,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="brasers">
+            <div class="brasers" <?php if($user->brasers !== null && $user->brasers > 0): $item = Inventory::findOne($user->brasers); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->brasers !== null && $user->brasers > 0): ?>
                     <?php $item = Inventory::findOne($user->brasers); ?>
                     <img src="<?= $item->img ?>" alt="Наручи">
@@ -51,7 +62,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="weapon">
+            <div class="weapon" <?php if($user->weapon !== null && $user->weapon > 0): $item = Inventory::findOne($user->weapon); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->weapon !== null && $user->weapon > 0): ?>
                     <?php $item = Inventory::findOne($user->weapon); ?>
                     <img src="<?= $item->img ?>" alt="Оружие">
@@ -60,7 +71,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="chest">
+            <div class="chest" <?php if($user->chest !== null && $user->chest > 0): $item = Inventory::findOne($user->chest); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->chest !== null && $user->chest > 0): ?>
                     <?php $item = Inventory::findOne($user->chest); ?>
                     <img src="<?= $item->img ?>" alt="Броня">
@@ -69,7 +80,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="belt">
+            <div class="belt" <?php if($user->belt !== null && $user->belt > 0): $item = Inventory::findOne($user->belt); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->belt !== null && $user->belt > 0): ?>
                     <?php $item = Inventory::findOne($user->belt); ?>
                     <img src="<?= $item->img ?>" alt="Пояс">
@@ -88,7 +99,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
         
         <!-- ПРАВАЯ КОЛОНКА -->
         <div class="inventory-right">
-            <div class="earrings">
+            <div class="earrings" <?php if($user->earrings !== null && $user->earrings > 0): $item = Inventory::findOne($user->earrings); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->earrings !== null && $user->earrings > 0): ?>
                     <?php $item = Inventory::findOne($user->earrings); ?>
                     <img src="<?= $item->img ?>" alt="Серьги">
@@ -97,7 +108,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="amulet">
+            <div class="amulet" <?php if($user->amulet !== null && $user->amulet > 0): $item = Inventory::findOne($user->amulet); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->amulet !== null && $user->amulet > 0): ?>
                     <?php $item = Inventory::findOne($user->amulet); ?>
                     <img src="<?= $item->img ?>" alt="Амулет">
@@ -108,7 +119,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
             
             <!-- 3 КОЛЬЦА В СТРОКУ -->
             <div class="rings">
-                <div class="ring">
+                <div class="ring" <?php if($user->ring1 !== null && $user->ring1 > 0): $item = Inventory::findOne($user->ring1); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                     <?php if($user->ring1 !== null && $user->ring1 > 0): ?>
                         <?php $item = Inventory::findOne($user->ring1); ?>
                         <img src="<?= $item->img ?>" alt="Кольцо 1">
@@ -116,7 +127,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                         <img src="/img/inv/ring.png" alt="Кольцо">
                     <?php endif; ?>
                 </div>
-                <div class="ring">
+                <div class="ring" <?php if($user->ring2 !== null && $user->ring2 > 0): $item = Inventory::findOne($user->ring2); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                     <?php if($user->ring2 !== null && $user->ring2 > 0): ?>
                         <?php $item = Inventory::findOne($user->ring2); ?>
                         <img src="<?= $item->img ?>" alt="Кольцо 2">
@@ -124,7 +135,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                         <img src="/img/inv/ring.png" alt="Кольцо">
                     <?php endif; ?>
                 </div>
-                <div class="ring">
+                <div class="ring" <?php if($user->ring3 !== null && $user->ring3 > 0): $item = Inventory::findOne($user->ring3); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                     <?php if($user->ring3 !== null && $user->ring3 > 0): ?>
                         <?php $item = Inventory::findOne($user->ring3); ?>
                         <img src="<?= $item->img ?>" alt="Кольцо 3">
@@ -134,7 +145,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 </div>
             </div>
             
-            <div class="gloves">
+            <div class="gloves" <?php if($user->gloves !== null && $user->gloves > 0): $item = Inventory::findOne($user->gloves); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->gloves !== null && $user->gloves > 0): ?>
                     <?php $item = Inventory::findOne($user->gloves); ?>
                     <img src="<?= $item->img ?>" alt="Перчатки">
@@ -143,7 +154,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="shild">
+            <div class="shild" <?php if($user->shild !== null && $user->shild > 0): $item = Inventory::findOne($user->shild); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->shild !== null && $user->shild > 0): ?>
                     <?php $item = Inventory::findOne($user->shild); ?>
                     <img src="<?= $item->img ?>" alt="Щит">
@@ -152,7 +163,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="leg">
+            <div class="leg" <?php if($user->leg !== null && $user->leg > 0): $item = Inventory::findOne($user->leg); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->leg !== null && $user->leg > 0): ?>
                     <?php $item = Inventory::findOne($user->leg); ?>
                     <img src="<?= $item->img ?>" alt="Поножи">
@@ -161,7 +172,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
                 <?php endif; ?>
             </div>
             
-            <div class="boots">
+            <div class="boots" <?php if($user->boots !== null && $user->boots > 0): $item = Inventory::findOne($user->boots); ?> data-tooltip="<?= htmlspecialchars(getTooltipText($item)) ?>" <?php endif; ?>>
                 <?php if($user->boots !== null && $user->boots > 0): ?>
                     <?php $item = Inventory::findOne($user->boots); ?>
                     <img src="<?= $item->img ?>" alt="Ботинки">
@@ -445,6 +456,7 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
     align-items: center;
     transition: .2s;
     box-shadow: inset 0 0 6px rgba(255,220,120,.05), 0 0 5px rgba(0,0,0,.4);
+    position: relative;
 }
 
 .head img,
@@ -498,6 +510,91 @@ $winRate = $totalBattles > 0 ? round(($user->win / $totalBattles) * 100) : 0;
     transform: scale(1.05);
     border-color: #d9b36b;
     box-shadow: 0 0 10px rgba(255,215,120,.25);
+}
+
+/* Стили для всплывающих подсказок */
+.head[data-tooltip]:hover::after,
+.weapon[data-tooltip]:hover::after,
+.shild[data-tooltip]:hover::after,
+.chest[data-tooltip]:hover::after,
+.leg[data-tooltip]:hover::after,
+.brasers[data-tooltip]:hover::after,
+.belt[data-tooltip]:hover::after,
+.gloves[data-tooltip]:hover::after,
+.boots[data-tooltip]:hover::after,
+.earrings[data-tooltip]:hover::after,
+.amulet[data-tooltip]:hover::after,
+.ring[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, #1a1a1a, #0d0d0d);
+    color: #ffd27b;
+    font-size: 11px;
+    font-family: Verdana, Tahoma, sans-serif;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #8d6737;
+    white-space: pre-line;
+    z-index: 1000;
+    min-width: 150px;
+    max-width: 250px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+    pointer-events: none;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+/* Стрелка у подсказки */
+.head[data-tooltip]:hover::before,
+.weapon[data-tooltip]:hover::before,
+.shild[data-tooltip]:hover::before,
+.chest[data-tooltip]:hover::before,
+.leg[data-tooltip]:hover::before,
+.brasers[data-tooltip]:hover::before,
+.belt[data-tooltip]:hover::before,
+.gloves[data-tooltip]:hover::before,
+.boots[data-tooltip]:hover::before,
+.earrings[data-tooltip]:hover::before,
+.amulet[data-tooltip]:hover::before,
+.ring[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px;
+    border-style: solid;
+    border-color: #8d6737 transparent transparent transparent;
+    z-index: 1000;
+}
+
+/* Для предметов в правой колонке - подсказка может выезжать влево чтобы не обрезалась */
+.inventory-right .ring[data-tooltip]:hover::after,
+.inventory-right .earrings[data-tooltip]:hover::after,
+.inventory-right .amulet[data-tooltip]:hover::after,
+.inventory-right .gloves[data-tooltip]:hover::after,
+.inventory-right .shild[data-tooltip]:hover::after,
+.inventory-right .leg[data-tooltip]:hover::after,
+.inventory-right .boots[data-tooltip]:hover::after {
+    left: auto;
+    right: 0;
+    transform: translateX(0);
+}
+
+.inventory-right .ring[data-tooltip]:hover::before,
+.inventory-right .earrings[data-tooltip]:hover::before,
+.inventory-right .amulet[data-tooltip]:hover::before,
+.inventory-right .gloves[data-tooltip]:hover::before,
+.inventory-right .shild[data-tooltip]:hover::before,
+.inventory-right .leg[data-tooltip]:hover::before,
+.inventory-right .boots[data-tooltip]:hover::before {
+    left: auto;
+    right: 25px;
+    transform: translateX(0);
 }
 
 .inventory img {

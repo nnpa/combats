@@ -2,12 +2,12 @@
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
 
-$this->title = 'Артефакты';
+$this->title = 'Артефакты и заклинания';
 ?>
 
 <div class="shop-container">
     <div class="shop-header">
-        <h1>Артефакты</h1>
+        <h1>Артефакты и заклинания</h1>
         <div class="user-stats">
             <div class="stat-card">
                 <span class="stat-label">KR</span>
@@ -24,7 +24,32 @@ $this->title = 'Артефакты';
         </div>
     </div>
 
+    <!-- Заклинание -->
+    <?php if ($spell): ?>
+    <div class="spell-section">
+        <h2 class="section-title">📜 Заклинания</h2>
+        <div class="spell-card">
+            <div class="spell-image">
+                <img src="<?= $spell->img ?>" alt="<?= Html::encode($spell->name) ?>">
+            </div>
+            <div class="spell-info">
+                <div class="spell-name"><?= Html::encode($spell->name) ?></div>
+                <div class="spell-price">💎 Цена: 1 EKR</div>
+            </div>
+            <div class="spell-button">
+                <a class="btn-buy-spell" 
+                   href="/shop/buy-spell?id=<?= $spell->id ?>" 
+                   onclick="return confirm('Купить заклинание «<?= Html::encode($spell->name) ?>» за 1 EKR?');">
+                    🛒 Купить за 1 EKR
+                </a>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Артефакты -->
     <?php if (!empty($items)): ?>
+        <h2 class="section-title">✨ Артефакты</h2>
         <div class="items-grid">
             <?php foreach ($items as $item): ?>
                 <div class="item-card">
@@ -260,6 +285,7 @@ $this->title = 'Артефакты';
     color: #ffd700;
 }
 
+/* Сетка предметов */
 .items-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -267,6 +293,7 @@ $this->title = 'Артефакты';
     margin-bottom: 30px;
 }
 
+/* Карточка предмета */
 .item-card {
     background: #3d2317;
     border-radius: 8px;
@@ -304,6 +331,7 @@ $this->title = 'Артефакты';
     text-align: center;
 }
 
+/* Списки */
 .info-list, .requirements-list, .stats-list {
     margin-bottom: 12px;
 }
@@ -433,6 +461,7 @@ $this->title = 'Артефакты';
     cursor: not-allowed;
 }
 
+/* Пагинация */
 .pagination {
     display: flex;
     justify-content: center;
@@ -477,6 +506,83 @@ $this->title = 'Артефакты';
     color: #c9a87b;
 }
 
+/* Стили для заклинания */
+.spell-section {
+    margin-bottom: 30px;
+    background: #3d2317;
+    border-radius: 12px;
+    border: 1px solid #5c3a2a;
+    padding: 20px;
+}
+
+.section-title {
+    color: #ffd700;
+    font-size: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #5c3a2a;
+}
+
+.spell-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #2c1810;
+    border-radius: 10px;
+    padding: 15px;
+    flex-wrap: wrap;
+}
+
+.spell-image {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+}
+
+.spell-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.spell-info {
+    flex: 1;
+}
+
+.spell-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.spell-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: #cc66ff;
+    margin-top: 8px;
+}
+
+.spell-button {
+    flex-shrink: 0;
+}
+
+.btn-buy-spell {
+    display: block;
+    padding: 10px 20px;
+    background: #6b3c8b;
+    color: #ffccff;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.btn-buy-spell:hover {
+    background: #8b4faf;
+    transform: scale(1.02);
+}
+
 @media (max-width: 768px) {
     .shop-header {
         flex-direction: column;
@@ -485,6 +591,15 @@ $this->title = 'Артефакты';
     
     .items-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .spell-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .spell-info {
+        text-align: center;
     }
 }
 </style>

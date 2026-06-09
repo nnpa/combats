@@ -40,7 +40,7 @@ $this->title = 'Кузница';
                         <div class="item-row">
                             <div class="col-item">
                                 <div class="item-info">
-                                    <img src="/<?= $item->img ?>" alt="<?= Html::encode($item->name) ?>" class="item-img">
+                                    <img src="<?= $item->img ?>" alt="<?= Html::encode($item->name) ?>" class="item-img">
                                     <div class="item-details">
                                         <div class="item-name"><?= Html::encode($item->name) ?></div>
                                         <div class="item-type"><?= Html::encode($item->type) ?> | Уровень: <?= $item->n_level ?></div>

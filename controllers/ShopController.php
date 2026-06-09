@@ -8,6 +8,8 @@ use app\models\Elexir;
 use app\models\InvetoryElexir;
 use yii\data\Pagination;  // ← ДОБАВЬТЕ ЭТУ СТРОКУ
 use app\models\Inventory  as InventoryModel;
+use app\models\Spells;
+use app\models\UserSpells;
 
 use Yii;
 class ShopController extends AppController
@@ -65,46 +67,48 @@ class ShopController extends AppController
         return $this->redirect($_SERVER['HTTP_REFERER']);
     }
     
-   public function actionArt()
-{
-    $user = Yii::$app->user->identity;
-    $user = User::findOne(['id' => $user->id]);
-    
-    // Только артефакты (isArt = 1, isCraft = 0)
-    $query = Item::find()
-        ->select([
-            'id', 'name', 'type', 'img', 'cost', 'cost_ekr', 'n_level',
-            'n_str', 'n_dex', 'n_intu', 'n_end', 'n_inte',
-            'n_water', 'n_fire', 'n_earth', 'n_air',
-            'str', 'dex', 'intu', 'end', 'damage', 'defence', 
-            'health', 'mana', 'crit', 'anticrit', 'mdef', 
-            'evaision', 'aeveision', 'water', 'air', 'fire', 'earth'
-        ])
-        ->where(['not', ['img' => null]])
-        ->andWhere(['<>', 'img', ''])
-        ->andWhere(["isArt" => 1])
-        ->andWhere(["isCraft" => 0]);
+  public function actionArt()
+    {
+        $user = Yii::$app->user->identity;
+        $user = User::findOne(['id' => $user->id]);
+        
+        // Только артефакты (isArt = 1, isCraft = 0)
+        $query = Item::find()
+            ->select([
+                'id', 'name', 'type', 'img', 'cost', 'cost_ekr', 'n_level',
+                'n_str', 'n_dex', 'n_intu', 'n_end', 'n_inte',
+                'n_water', 'n_fire', 'n_earth', 'n_air',
+                'str', 'dex', 'intu', 'end', 'damage', 'defence', 
+                'health', 'mana', 'crit', 'anticrit', 'mdef', 
+                'evaision', 'aeveision', 'water', 'air', 'fire', 'earth'
+            ])
+            ->where(['not', ['img' => null]])
+            ->andWhere(['<>', 'img', ''])
+            ->andWhere(["isArt" => 1])
+            ->andWhere(["isCraft" => 0]);
 
-    // Сортировка по уровню
-    $query->orderBy(['n_level' => SORT_ASC, 'type' => SORT_ASC, 'id' => SORT_ASC]);
-    
-    // Пагинация
-    $pagination = new Pagination([
-        'totalCount' => $query->count(),
-        'pageSize' => 24,
-        'pageSizeParam' => false,
-    ]);
-    
-    $items = $query->offset($pagination->offset)
-        ->limit($pagination->limit)
-        ->all();
-    
-    return $this->render('art', [
-        'items' => $items,
-        'user' => $user,
-        'pagination' => $pagination,
-    ]);
-}
+        $query->orderBy(['n_level' => SORT_ASC, 'type' => SORT_ASC, 'id' => SORT_ASC]);
+        
+        $pagination = new Pagination([
+            'totalCount' => $query->count(),
+            'pageSize' => 24,
+            'pageSizeParam' => false,
+        ]);
+        
+        $items = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        
+        // Получаем заклинание с id = 2
+        $spell = Spells::findOne(['id' => 2]);
+        
+        return $this->render('art', [
+            'items' => $items,
+            'user' => $user,
+            'pagination' => $pagination,
+            'spell' => $spell,
+        ]);
+    }
 
 public function actionBuyrepa($id){
     $item = Item::findOne(["id" => $id]);
@@ -403,5 +407,49 @@ public function actionBuyrepa($id){
         $user->kr = $user->kr + $cost;
         $user->save(false);
         return $this->redirect('/inventory/index');
+    }
+    
+    public function actionBuySpell($id)
+    {
+        $user = Yii::$app->user->identity;
+        $user = User::findOne(['id' => $user->id]);
+        
+        $spell = Spells::findOne(['id' => $id]);
+        
+        if (!$spell) {
+            Yii::$app->session->setFlash('error', 'Заклинание не найдено!');
+            return $this->redirect(['/shop/art']);
+        }
+        
+        // Проверяем, есть ли уже такое заклинание у пользователя
+        $exists = UserSpells::findOne([
+            'user_id' => $user->id,
+            'spell_id' => $spell->id
+        ]);
+        
+        if ($exists) {
+            Yii::$app->session->setFlash('error', 'У вас уже есть это заклинание!');
+            return $this->redirect(['/shop/art']);
+        }
+        
+        // Проверяем достаточно ли EKR
+        if ($user->ekr < 1) {
+            Yii::$app->session->setFlash('error', 'Недостаточно EKR! Нужно: 1 EKR');
+            return $this->redirect(['/shop/art']);
+        }
+        
+        // Списываем EKR
+        $user->ekr -= 1;
+        $user->save(false);
+        
+        // Добавляем заклинание пользователю
+        $userSpell = new UserSpells();
+        $userSpell->user_id = $user->id;
+        $userSpell->spell_id = $spell->id;
+        $userSpell->save(false);
+        
+        Yii::$app->session->setFlash('success', 'Вы купили заклинание "' . $spell->name . '" за 1 EKR!');
+        
+        return $this->redirect(['/shop/art']);
     }
 }
