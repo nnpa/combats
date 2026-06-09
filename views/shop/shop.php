@@ -111,7 +111,7 @@ $this->title = 'Магазин';
             <?php foreach ($items as $item): ?>
                 <div class="item-card">
                     <div class="item-image">
-                        <img src="/<?= $item->img ?>" alt="<?= Html::encode($item->name) ?>">
+                        <img src="<?= $item->img ?>" alt="<?= Html::encode($item->name) ?>">
                     </div>
                     <div class="item-content">
                         <div class="item-name"><?= Html::encode($item->name) ?></div>

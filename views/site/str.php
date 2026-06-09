@@ -88,7 +88,7 @@
             }
         }
         .image-container {
-    margin-top: 120px; /* добавить отступ сверху */
+    margin-top: 200px; /* добавить отступ сверху */
 }
     </style>
 </head>
