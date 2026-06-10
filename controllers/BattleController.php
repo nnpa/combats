@@ -12,7 +12,7 @@ use yii\data\Pagination;  // <-- ДОБАВЬТЕ ЭТУ СТРОКУ
 class BattleController extends AppController
 {
     //страница поединки
-    public function actionIndex()
+public function actionIndex()
     {
         $user = Yii::$app->user->identity;
         $user = User::findOne(['id'=>$user->id]);
@@ -20,14 +20,13 @@ class BattleController extends AppController
         //если отправлена форма заявки на бой
         if(isset($_POST["count"]) && is_null($user->battle_id)){
             $count = $_POST["count"];
-            if($count != 1 || $count != 3){
+            if($count != 1 && $count != 3){ // Исправлено: && вместо ||
                 $count = 1;
             }
             $battle = new Battle();
-            $battle->start_time = time() + 15;
-            $battle->type= $count;
-            $battle->level= $user->level;
-
+            $battle->start_time = time() + 60;
+            $battle->type = $count;
+            $battle->level = $user->level;
             $battle->save(false);
             
             $user->battle_id = $battle->id;
@@ -37,27 +36,42 @@ class BattleController extends AppController
             $userBattle->battle_id = $battle->id;
             $userBattle->user_id = $user->id;
             $userBattle->hp = $user->health;
-
             $userBattle->user_session = $user->session_id;
             $userBattle->save(false);
-            
         }
+        
         //если противник присоединился к бою
         if(isset($_POST["battle_id"]) && is_null($user->battle_id)){
             $id = $_POST["battle_id"];
             
-            $user->battle_id = $id;
-            $user->save(false);
-            
-            $userBattle = new UserBattle();
-            $userBattle->battle_id = $id;
-            $userBattle->user_id = $user->id;
-            $userBattle->hp = $user->health;
-            $userBattle->user_session = $user->session_id;
-            $userBattle->save(false);
+            // Проверяем, есть ли место в бою
+            $battle = Battle::findOne($id);
+            if($battle && $battle->started === null) {
+                $participantsCount = UserBattle::find()
+                    ->where(['battle_id' => $id])
+                    ->count();
+                
+                $maxPlayers = $battle->type * 2;
+                
+                if($participantsCount < $maxPlayers) {
+                    $user->battle_id = $id;
+                    $user->save(false);
+                    
+                    $userBattle = new UserBattle();
+                    $userBattle->battle_id = $id;
+                    $userBattle->user_id = $user->id;
+                    $userBattle->hp = $user->health;
+                    $userBattle->user_session = $user->session_id;
+                    $userBattle->save(false);
+                }
+            }
         }
-        //поиск всех битв
-        $battles = Battle::findAll(["started" => NULL]);
+        
+        //поиск всех битв, которые еще не начались
+        $battles = Battle::find()
+            ->where(['started' => null])
+            ->andWhere(['>', 'start_time', time()])
+            ->all();
         
         return $this->render('zayavka',["user" => $user,"battles"=>$battles]);
     }

@@ -249,9 +249,10 @@ use yii\helpers\Html;
             if($currentBattle && $currentBattle->started === null):
         ?>
         <div class="waiting-message">
-            <h2>⏳ Ожидание соперника...</h2>
+            <h2>⏳ Ожидание соперников...</h2>
             <p>Вы создали заявку на бой <strong><?= $currentBattle->type == 1 ? '1x1' : '3x3' ?></strong></p>
-            <p>Если никто не присоединится, бой начнется с ботом через:</p>
+            <p>Максимум участников: <strong><?= $currentBattle->type == 1 ? '2' : '6' ?></strong></p>
+            <p>Если не наберется нужное количество, бой начнется с ботом через:</p>
             <div class="waiting-timer" id="battle-timer" data-start-time="<?= $currentBattle->start_time ?>">
                 <?php
                     $remaining = $currentBattle->start_time - time();
@@ -265,7 +266,7 @@ use yii\helpers\Html;
                 ?>
             </div>
             <div class="waiting-note">
-                ℹ️ Примечание: Вы не можете отменить заявку. Если никто не присоединится, вы будете сражаться с ботом.
+                ℹ️ Примечание: Вы не можете отменить заявку. Если не наберется нужное количество игроков, недостающие места будут заполнены ботами.
             </div>
         </div>
         <?php else: ?>
@@ -307,8 +308,16 @@ use yii\helpers\Html;
                         ->where(['battle_id' => $battle->id])
                         ->count();
                     
-                    $maxPlayers = $battle->type == 1 ? 2 : 6;
+                    // Правильный расчет максимального количества игроков
+                    // Для type=1 -> 2 игрока (1x1)
+                    // Для type=3 -> 6 игроков (3x3)
+                    $maxPlayers = $battle->type * 2;
                     $isFull = $participantsCount >= $maxPlayers;
+                    
+                    // Проверяем, не участвует ли уже пользователь в этой битве
+                    $alreadyInBattle = \app\models\UserBattle::find()
+                        ->where(['battle_id' => $battle->id, 'user_id' => $user->id])
+                        ->exists();
                 ?>
                 <div class="battle-card" data-battle-id="<?= $battle->id ?>">
                     <div class="battle-info">
@@ -332,8 +341,10 @@ use yii\helpers\Html;
                             </span>
                         </div>
                     </div>
-                    <?php if(!$isFull): ?>
+                    <?php if(!$isFull && !$alreadyInBattle): ?>
                         <button class="join-button" onclick="joinBattle(<?= $battle->id ?>)">🎮 Присоединиться</button>
+                    <?php elseif($alreadyInBattle): ?>
+                        <button class="join-button" style="opacity:0.5; cursor:not-allowed;" disabled>✅ Вы уже в этом бою</button>
                     <?php else: ?>
                         <button class="join-button" style="opacity:0.5; cursor:not-allowed;" disabled>🙅 Мест нет</button>
                     <?php endif; ?>
@@ -404,9 +415,13 @@ function updateTimers() {
             if(timer.id === 'battle-timer') {
                 timer.textContent = timeStr;
             } else {
-                const prefix = timer.textContent.split('через:')[0];
+                const text = timer.textContent;
+                const prefix = text.split('через:')[0];
                 timer.textContent = prefix + 'через: ' + timeStr;
             }
+        } else if(startTime && startTime <= now) {
+            // Если время вышло, перезагружаем страницу
+            location.reload();
         }
     });
 }
@@ -416,4 +431,11 @@ if(document.querySelectorAll('.battle-timer, #battle-timer').length > 0) {
     updateTimers();
     setInterval(updateTimers, 1000);
 }
+
+// Автообновление списка заявок каждые 10 секунд (если пользователь не в бою)
+<?php if($user->battle_id === null): ?>
+setInterval(function() {
+    location.reload();
+}, 10000);
+<?php endif; ?>
 </script>
