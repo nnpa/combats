@@ -63,28 +63,7 @@ echo "\n🎉 Готово! Все папки созданы.\n";
         }
     }
     
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'], // '@' означает авторизованного пользователя
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'], // Выход только по POST-запросу для безопасности
-                ],
-            ],
-        ];
-    }
+ 
 
     /**
      * Объявление действий, например, для страницы ошибок.
@@ -146,27 +125,26 @@ private function getActiveEvent()
     /**
      * Действие для страницы входа.
      */
-    public function actionLogin()
-    {
-        // Если пользователь уже вошел, перенаправляем его на главную
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-
-        // Если форма отправлена и прошла валидацию
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            // Метод login() вернет true, если все хорошо.
-            // Дальнейшая логика (запись session_id) выполнится в обработчике событий.
-            return $this->goBack(); // Или return $this->goHome();
-        }
-
-        // Отображаем вид с формой входа
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+public function actionLogin()
+{
+    // Если пользователь уже вошел, перенаправляем его на CP
+    if (!Yii::$app->user->isGuest) {
+        return $this->redirect(['site/cp']);
     }
+
+    $model = new LoginForm();
+
+    // Если форма отправлена и прошла валидацию
+    if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        // После успешного входа перенаправляем на CP
+        return $this->redirect(['site/cp']);
+    }
+
+    // Отображаем вид с формой входа
+    return $this->render('login', [
+        'model' => $model,
+    ]);
+}
 
     /**
      * Действие для выхода из системы.
@@ -299,7 +277,7 @@ public function actionLogout()
      }
 
      public function actionIndex(){
-         return $this->actionCp();
+         return $this->render("index");
      }
 }
 ?>

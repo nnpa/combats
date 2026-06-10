@@ -153,7 +153,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     const userId = '<?php echo $user->session_id;?>';
 
                     function connect() {
-                        const ws = new WebSocket(`ws://localhost:8080/ws?user=${userId}`);
+                        const ws = new WebSocket(`ws://<?php echo Yii::$app->params['sockhost'];?>:8080/ws?user=${userId}`);
 
                         ws.onopen = () => {
                             addMessage(`✅ Соединение установлено. Ваш ID: ${userId}`, 'system');
