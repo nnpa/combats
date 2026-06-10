@@ -3,10 +3,10 @@ const mysql = require('mysql2/promise');
 class ElixirDaemon {
     constructor() {
         this.dbConfig = {
-            host: 'localhost',
+            host: '127.0.0.1',
             port: 3306,
-            user: 'root',
-            password: '',
+            user: 'combats_user',
+            password: '12345678',
             database: 'combats',
             waitForConnections: true,
             connectionLimit: 10,
@@ -394,7 +394,7 @@ class ElixirDaemon {
         setInterval(async () => {
             if (!this.isRunning) return;
             await this.processExpiredElixirs();
-        }, 5000);
+        }, 60000);
         
         process.on('SIGINT', async () => {
             console.log('\n[DAEMON] Завершение...');

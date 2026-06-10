@@ -10,6 +10,7 @@ class AppController extends Controller
     protected function publicActions()
     {
         return [
+            'site/doc',
             'site/index',
             'site/login',
             'site/signup',

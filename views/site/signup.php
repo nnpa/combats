@@ -36,7 +36,9 @@ $this->title = 'Регистрация';
                 <div class="signup-buttons">
                     <?= Html::submitButton('📝 Зарегистрироваться', ['class' => 'btn-signup', 'name' => 'signup-button']) ?>
                 </div>
-
+                <div class="signup-agreement">
+                    <?= Html::a('Вы автоматически соглашаетесь с пользовательским соглашением', ['/site/doc']) ?>
+                </div>
                 <div class="signup-links">
                     <?= Html::a('Уже есть аккаунт? Войти', ['site/login']) ?>
                 </div>

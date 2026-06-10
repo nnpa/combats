@@ -26,7 +26,7 @@ class InventoryController extends AppController
         $userElexir->img  = $inventoryElexir->img;
         $userElexir->type  = $inventoryElexir->type;
         $userElexir->user_id  = $user->id;
-        $userElexir->use_time  = time()+30;
+        $userElexir->use_time  = time()+60*60*2;
         $userElexir->save(false);
         
         $inventoryElexir->delete();

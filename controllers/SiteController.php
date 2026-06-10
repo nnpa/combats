@@ -279,5 +279,11 @@ public function actionLogout()
      public function actionIndex(){
          return $this->render("index");
      }
+     
+     public function actionDoc(){
+         return $this->render("doc");
+     }
 }
+
+
 ?>

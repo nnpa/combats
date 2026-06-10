@@ -8,9 +8,9 @@ const { v4: uuidv4 } = require('uuid');
 
 // --- Настройки подключения к БД ---
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
-  password: '',
+  host: '127.0.0.1',
+  user: 'combats_user',
+  password: '12345678',
   database: 'combats'
 };
 
