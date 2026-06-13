@@ -6,7 +6,8 @@ $collapsed = $user->chat_collapsed ?? 0;
 $height = $user->chat_height ?? 300;
 ?>
 
-<div id="chat-widget" class="chat-widget" data-collapsed="<?= $collapsed ?>" style="height: <?= $collapsed ? '40px' : $height . 'px' ?>">
+<div id="chat-widget" class="chat-widget <?= $collapsed ? 'collapsed' : '' ?>" data-collapsed="<?= $collapsed ?>" style="height: <?= $collapsed ? '40px' : $height . 'px' ?>">
+    <div class="chat-resize-handle" id="chat-resize-handle"></div>
     <div class="chat-header" id="chat-header">
         <div class="chat-title">
             <span>💬 Общий чат</span>
@@ -17,7 +18,7 @@ $height = $user->chat_height ?? 300;
         </div>
     </div>
     
-    <div class="chat-body" id="chat-body" style="display: <?= $collapsed ? 'none' : 'flex' ?>">
+    <div class="chat-body" id="chat-body">
         <div class="chat-main">
             <div class="chat-messages" id="chat-messages"></div>
             
@@ -114,6 +115,26 @@ $height = $user->chat_height ?? 300;
     box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
 }
 
+.chat-widget.collapsed .chat-body {
+    display: none !important;
+}
+
+.chat-widget:not(.collapsed) .chat-body {
+    display: flex !important;
+}
+
+.chat-resize-handle {
+    height: 5px;
+    cursor: ns-resize;
+    background: #5c3a2a;
+    border-radius: 2px;
+    transition: background 0.2s;
+}
+
+.chat-resize-handle:hover {
+    background: #8b5e3c;
+}
+
 .chat-header {
     display: flex;
     justify-content: space-between;
@@ -151,8 +172,7 @@ $height = $user->chat_height ?? 300;
 }
 
 .chat-body {
-    display: flex;
-    height: calc(100% - 40px);
+    height: calc(100% - 45px);
     min-height: 0;
 }
 
@@ -161,6 +181,7 @@ $height = $user->chat_height ?? 300;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    height: 100%;
 }
 
 .chat-users-panel {
@@ -169,6 +190,7 @@ $height = $user->chat_height ?? 300;
     border-left: 1px solid #5c3a2a;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .users-header {
@@ -177,12 +199,14 @@ $height = $user->chat_height ?? 300;
     color: #ffd700;
     font-weight: bold;
     border-bottom: 1px solid #5c3a2a;
+    flex-shrink: 0;
 }
 
 .users-list {
     flex: 1;
     overflow-y: auto;
     padding: 5px;
+    min-height: 0;
 }
 
 .user-item {
@@ -238,6 +262,7 @@ $height = $user->chat_height ?? 300;
     overflow-y: auto;
     padding: 10px;
     background: #1f150c;
+    min-height: 0;
 }
 
 .message-item {
@@ -285,6 +310,7 @@ $height = $user->chat_height ?? 300;
     padding: 10px;
     background: #2c1810;
     border-top: 1px solid #5c3a2a;
+    flex-shrink: 0;
 }
 
 .smileys-panel {
@@ -397,6 +423,7 @@ $height = $user->chat_height ?? 300;
         padding: 1px 4px;
     }
 }
+
 .clan-icon {
     width: 20px;
     height: 20px;
@@ -405,12 +432,40 @@ $height = $user->chat_height ?? 300;
     border: 1px solid #ffd700;
     background: #2c1810;
 }
+
+/* Улучшенная прокрутка */
+.chat-messages::-webkit-scrollbar,
+.users-list::-webkit-scrollbar,
+.smileys-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track,
+.users-list::-webkit-scrollbar-track,
+.smileys-panel::-webkit-scrollbar-track {
+    background: #2c1810;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb,
+.users-list::-webkit-scrollbar-thumb,
+.smileys-panel::-webkit-scrollbar-thumb {
+    background: #7b5a2f;
+    border-radius: 3px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover,
+.users-list::-webkit-scrollbar-thumb:hover,
+.smileys-panel::-webkit-scrollbar-thumb:hover {
+    background: #8b5e3c;
+}
 </style>
 
 <script>
 var chatLastId = 0;
 var chatCurrentUser = <?= Yii::$app->user->id ?>;
 var chatCurrentReply = null;
+var isResizing = false;
 
 function formatTime(timestamp) {
     var date = new Date(timestamp * 1000);
@@ -463,6 +518,8 @@ function loadUsers() {
             var countSpan = document.getElementById('users-count');
             var onlineCount = document.getElementById('onlineCount');
             
+            if (!container) return;
+            
             countSpan.textContent = users.length;
             if (onlineCount) onlineCount.textContent = users.length;
             
@@ -490,18 +547,22 @@ function loadUsers() {
             
             // Привязываем обработчики для кнопок приватных сообщений
             document.querySelectorAll('.private-btn').forEach(function(btn) {
-                btn.addEventListener('click', function(e) {
-                    var userId = this.getAttribute('data-user-id');
-                    var username = this.getAttribute('data-username');
-                    setPrivateReply(userId, username);
-                });
+                btn.removeEventListener('click', handlePrivateClick);
+                btn.addEventListener('click', handlePrivateClick);
             });
         })
         .catch(error => console.error('Error loading users:', error));
 }
 
+function handlePrivateClick(e) {
+    var userId = this.getAttribute('data-user-id');
+    var username = this.getAttribute('data-username');
+    setPrivateReply(userId, username);
+}
+
 function setPrivateReply(userId, username) {
     var input = document.getElementById('chat-input');
+    if (!input) return;
     chatCurrentReply = userId;
     input.value = '@' + username + ' ';
     input.focus();
@@ -509,6 +570,8 @@ function setPrivateReply(userId, username) {
 
 function sendMessage() {
     var input = document.getElementById('chat-input');
+    if (!input) return;
+    
     var message = input.value.trim();
     
     if (message === '') return;
@@ -557,18 +620,41 @@ function saveChatState(height, collapsed) {
     }).catch(error => console.error('Error saving chat state:', error));
 }
 
+function refreshChatLayout() {
+    // Принудительный перерасчет layout после изменения размера/отображения
+    var chatWidget = document.getElementById('chat-widget');
+    if (chatWidget && !chatWidget.classList.contains('collapsed')) {
+        // Trigger reflow
+        void chatWidget.offsetHeight;
+        
+        // Обновляем скролл сообщений вниз
+        var messagesContainer = document.getElementById('chat-messages');
+        if (messagesContainer) {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        // Принудительно перезагружаем данные
+        loadMessages();
+        loadUsers();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Загружаем начальные данные
     loadMessages();
     loadUsers();
     
+    // Устанавливаем интервалы обновления
     setInterval(loadMessages, 10000);
     setInterval(loadUsers, 15000);
     
+    // Обработчик отправки сообщения
     var sendBtn = document.getElementById('chat-send');
     if (sendBtn) {
         sendBtn.addEventListener('click', sendMessage);
     }
     
+    // Обработчик ввода с клавиатуры
     var chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.addEventListener('keypress', function(e) {
@@ -583,21 +669,47 @@ document.addEventListener('DOMContentLoaded', function() {
     var minimizeBtn = document.getElementById('chat-minimize');
     var chatWidget = document.getElementById('chat-widget');
     var chatBody = document.getElementById('chat-body');
-    if (minimizeBtn && chatWidget && chatBody) {
-        var currentCollapsed = chatWidget.getAttribute('data-collapsed') === '1';
-        
-        minimizeBtn.addEventListener('click', function() {
-            currentCollapsed = !currentCollapsed;
-            var newHeight = currentCollapsed ? 40 : <?= $height ?>;
-            chatWidget.style.height = newHeight + 'px';
-            chatBody.style.display = currentCollapsed ? 'none' : 'flex';
-            minimizeBtn.textContent = currentCollapsed ? '▲' : '▼';
-            saveChatState(newHeight, currentCollapsed ? 1 : 0);
+    
+    if (minimizeBtn && chatWidget) {
+        minimizeBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var isCollapsed = chatWidget.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                // Разворачиваем
+                chatWidget.classList.remove('collapsed');
+                chatWidget.style.height = '<?= $height ?>px';
+                minimizeBtn.textContent = '▼';
+                saveChatState(parseInt(chatWidget.style.height, 10), 0);
+                
+                // Принудительно обновляем layout и перезагружаем данные
+                setTimeout(function() {
+                    refreshChatLayout();
+                }, 50);
+            } else {
+                // Сворачиваем
+                chatWidget.classList.add('collapsed');
+                chatWidget.style.height = '40px';
+                minimizeBtn.textContent = '▲';
+                saveChatState(40, 1);
+            }
         });
-    } else {
-        console.error('Minimize button or chat elements not found');
     }
     
+    // Заголовок чата для сворачивания
+    var chatHeader = document.getElementById('chat-header');
+    if (chatHeader && minimizeBtn) {
+        chatHeader.addEventListener('click', function(e) {
+            // Не сворачиваем если кликнули по кнопке минимизации
+            if (e.target === minimizeBtn || minimizeBtn.contains(e.target)) {
+                return;
+            }
+            // Имитируем клик по кнопке минимизации
+            minimizeBtn.click();
+        });
+    }
+    
+    // Панель смайликов
     var smileyToggle = document.getElementById('smiley-toggle');
     var smileysPanel = document.getElementById('smileys-panel');
     if (smileyToggle && smileysPanel) {
@@ -606,38 +718,68 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Добавляем смайлики в поле ввода
     var smileyBtns = document.querySelectorAll('.smiley-btn');
     for (var i = 0; i < smileyBtns.length; i++) {
         smileyBtns[i].addEventListener('click', function() {
             var smiley = this.getAttribute('data-smiley');
-            if (chatInput) chatInput.value += smiley;
-            if (chatInput) chatInput.focus();
+            if (chatInput) {
+                chatInput.value += smiley;
+                chatInput.focus();
+            }
         });
     }
     
-    var resizeHandle = document.createElement('div');
-    resizeHandle.style.cssText = 'height: 5px; cursor: ns-resize; background: #5c3a2a;';
-    chatWidget.insertBefore(resizeHandle, chatWidget.firstChild);
-    
+    // Ресайз чата
+    var resizeHandle = document.getElementById('chat-resize-handle');
     var startY, startHeight;
-    resizeHandle.addEventListener('mousedown', function(e) {
-        startY = e.clientY;
-        startHeight = parseInt(chatWidget.style.height, 10) || <?= $height ?>;
-        document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('mouseup', onMouseUp);
-        e.preventDefault();
-    });
+    
+    if (resizeHandle) {
+        resizeHandle.addEventListener('mousedown', function(e) {
+            if (chatWidget.classList.contains('collapsed')) return;
+            
+            isResizing = true;
+            startY = e.clientY;
+            startHeight = parseInt(chatWidget.style.height, 10) || <?= $height ?>;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
     
     function onMouseMove(e) {
+        if (!isResizing) return;
+        
         var newHeight = startHeight + (startY - e.clientY);
         newHeight = Math.min(Math.max(newHeight, 150), 500);
         chatWidget.style.height = newHeight + 'px';
     }
     
     function onMouseUp() {
+        if (!isResizing) return;
+        
+        isResizing = false;
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
-        saveChatState(parseInt(chatWidget.style.height, 10), currentCollapsed ? 1 : 0);
+        
+        var newHeight = parseInt(chatWidget.style.height, 10);
+        if (!chatWidget.classList.contains('collapsed')) {
+            saveChatState(newHeight, 0);
+            // После изменения размера обновляем layout
+            refreshChatLayout();
+        }
+    }
+    
+    // Наблюдатель за изменениями размера окна
+    var resizeObserver = new ResizeObserver(function() {
+        if (!chatWidget.classList.contains('collapsed')) {
+            refreshChatLayout();
+        }
+    });
+    
+    if (chatWidget && !chatWidget.classList.contains('collapsed')) {
+        resizeObserver.observe(chatWidget);
     }
 });
 </script>

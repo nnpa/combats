@@ -823,6 +823,12 @@ body {
                                 <?php if($item->n_end > 0): ?><div class="stat-line"><span>Выносливость:</span><span class="stat-red"><?= $item->n_end ?></span></div><?php endif; ?>
                                 <?php if($item->n_inte > 0): ?><div class="stat-line"><span>Интеллект:</span><span class="stat-red"><?= $item->n_inte ?></span></div><?php endif; ?>
                                 <?php if($item->n_intu > 0): ?><div class="stat-line"><span>Интуиция:</span><span class="stat-red"><?= $item->n_intu ?></span></div><?php endif; ?>
+                                
+                                <?php if($item->n_fire > 0): ?><div class="stat-line"><span>Огонь:</span><span class="stat-red"><?= $item->n_fire ?></span></div><?php endif; ?>
+                                <?php if($item->n_water > 0): ?><div class="stat-line"><span>Вода:</span><span class="stat-red"><?= $item->n_water ?></span></div><?php endif; ?>
+                                <?php if($item->n_air > 0): ?><div class="stat-line"><span>Воздух:</span><span class="stat-red"><?= $item->n_air ?></span></div><?php endif; ?>
+                                <?php if($item->n_earth > 0): ?><div class="stat-line"><span>Земля:</span><span class="stat-red"><?= $item->n_earth ?></span></div><?php endif; ?>
+                                
                             </div>
                         </div>
                         <div class="gives-block">
