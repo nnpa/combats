@@ -538,6 +538,7 @@ async function processNormalAttack(connection, attack, attacker, defender, battl
 
 // --- Функция проверки и завершения боя (с правильным начислением разницы) ---
 // --- Функция проверки и завершения боя (с правильным начислением разницы) ---
+// --- Функция проверки и завершения боя (исправленная версия) ---
 async function checkAndFinishBattle(connection, battle, battleUsers, totalDamageMap = {}, affectedUsers = new Set()) {
   const [updatedUsers] = await connection.execute(
     "SELECT * FROM user_battle WHERE battle_id = ?",
@@ -546,7 +547,7 @@ async function checkAndFinishBattle(connection, battle, battleUsers, totalDamage
   
   // Загружаем данные по уровням UP
   const [allLevels] = await connection.execute(
-    "SELECT * FROM user_levels ORDER BY total_exp_to_this_up ASC"
+    "SELECT * FROM user_levels ORDER BY level ASC, up ASC"
   );
   
   const team1Alive = updatedUsers.some(u => u.komand === 1 && (u.IsAlive === 1 || u.IsAlive === true) && u.hp > 0);
@@ -592,6 +593,12 @@ async function checkAndFinishBattle(connection, battle, battleUsers, totalDamage
           let currentWin = userRows[0].win || 0;
           let currentLoose = userRows[0].loose || 0;
           
+          console.log(`\n  📊 User ${battleUser.user_id} current state:`);
+          console.log(`     Level: ${currentLevel}.${currentUp}`);
+          console.log(`     Exp: ${currentExp}`);
+          console.log(`     Points: ${currentPoints}`);
+          console.log(`     Kr: ${currentKr}`);
+          
           // Обновляем счетчик побед/поражений
           let newWin = currentWin;
           let newLoose = currentLoose;
@@ -615,57 +622,97 @@ async function checkAndFinishBattle(connection, battle, battleUsers, totalDamage
           
           let newExp = currentExp + expGain;
           
-          // Находим TOTAL_POINTS и TOTAL_KR до боя
-          let oldTotalPoints = 0;
-          let oldTotalKr = 0;
+          console.log(`     Exp gain: +${expGain} → ${newExp}`);
+          
+          // ===== ИСПРАВЛЕННАЯ ЛОГИКА РАСЧЕТА УРОВНЕЙ =====
+          // Находим текущий и новый уровни на основе общего опыта
+          
+          let newLevel = currentLevel;
+          let newUp = currentUp;
+          let totalPointsBefore = 0;
+          let totalPointsAfter = 0;
+          let totalKrBefore = 0;
+          let totalKrAfter = 0;
+          
+          // Находим текущие TOTAL значения (до боя)
           for (const levelData of allLevels) {
-            if (levelData.level < currentLevel) continue;
-            if (levelData.level === currentLevel && levelData.up <= currentUp) {
-              oldTotalPoints = levelData.total_points_to_this_up;
-              oldTotalKr = levelData.total_kr_to_this_up;
+            if (levelData.level === currentLevel && levelData.up === currentUp) {
+              totalPointsBefore = levelData.total_points_to_this_up;
+              totalKrBefore = levelData.total_kr_to_this_up;
+              break;
             }
           }
           
-          // Находим TOTAL_POINTS и TOTAL_KR после боя
-          let newTotalPoints = oldTotalPoints;
-          let newTotalKr = oldTotalKr;
-          let newLevel = currentLevel;
-          let newUp = currentUp;
-          
+          // Находим новые уровень и UP на основе нового опыта
+          let foundNewLevel = false;
           for (const levelData of allLevels) {
-            if (levelData.level < currentLevel) continue;
-            if (levelData.level === currentLevel && levelData.up <= currentUp) continue;
-            
             if (newExp >= levelData.total_exp_to_this_up) {
-              newTotalPoints = levelData.total_points_to_this_up;
-              newTotalKr = levelData.total_kr_to_this_up;
-              newUp = levelData.up;
               newLevel = levelData.level;
+              newUp = levelData.up;
+              totalPointsAfter = levelData.total_points_to_this_up;
+              totalKrAfter = levelData.total_kr_to_this_up;
+              foundNewLevel = true;
+            } else {
+              break;
             }
+          }
+          
+          // Если не нашли подходящий уровень (опыт меньше минимального)
+          if (!foundNewLevel && allLevels.length > 0) {
+            newLevel = allLevels[0].level;
+            newUp = allLevels[0].up;
+            totalPointsAfter = allLevels[0].total_points_to_this_up;
+            totalKrAfter = allLevels[0].total_kr_to_this_up;
           }
           
           // Начисляем ТОЛЬКО РАЗНИЦУ
-          let pointsGained = newTotalPoints - oldTotalPoints;
-          let krGained = newTotalKr - oldTotalKr;
+          let pointsGained = totalPointsAfter - totalPointsBefore;
+          let krGained = totalKrAfter - totalKrBefore;
+          
+          // Если уровень не изменился, разница будет 0
+          if (newLevel === currentLevel && newUp === currentUp) {
+            pointsGained = 0;
+            krGained = 0;
+          }
+          
+          // Гарантируем, что начисление не отрицательное
+          if (pointsGained < 0) pointsGained = 0;
+          if (krGained < 0) krGained = 0;
           
           let newPoints = currentPoints + pointsGained;
           let newKr = currentKr + krGained;
           
-          // Обновляем пользователя (добавлены поля win и loose)
+          console.log(`     Level change: ${currentLevel}.${currentUp} → ${newLevel}.${newUp}`);
+          console.log(`     Points gained: +${pointsGained} (${totalPointsBefore} → ${totalPointsAfter})`);
+          console.log(`     Kr gained: +${krGained} (${totalKrBefore} → ${totalKrAfter})`);
+          
+          // Обновляем пользователя
           await connection.execute(
             "UPDATE user SET exp = ?, level = ?, up = ?, points = ?, kr = ?, win = ?, loose = ?, in_battle = NULL, battle_id = NULL WHERE id = ?",
             [newExp, newLevel, newUp, newPoints, newKr, newWin, newLoose, battleUser.user_id]
           );
+          
+          // Проверяем, что обновление прошло успешно
+          const [verifyUser] = await connection.execute(
+            "SELECT level, up, exp, points, kr FROM user WHERE id = ?",
+            [battleUser.user_id]
+          );
+          
+          console.log(`     VERIFY after update: Level ${verifyUser[0]?.level}.${verifyUser[0]?.up}, Exp ${verifyUser[0]?.exp}, Points ${verifyUser[0]?.points}, Kr ${verifyUser[0]?.kr}`);
           
           const levelUpText = (newLevel > currentLevel || newUp > currentUp) ? ` Повышение до ${newLevel}.${newUp} UP!` : '';
           console.log(`  ✨ User ${battleUser.user_id}: +${expGain} exp, +${pointsGained} points, +${krGained} kr, ${isWinner ? 'WIN' : 'LOOSE'} (${isWinner ? newWin : newLoose}), level ${currentLevel}.${currentUp} → ${newLevel}.${newUp} (total damage: ${totalDamage})`);
           
           // Отправляем приватное сообщение в чат
           const winLoseText = isWinner ? "победой" : "поражением";
-          const chatMessage = `Бой закончен ${winLoseText}. +${expGain} опыта, +${pointsGained} очков характеристик, +${krGained} KR.${levelUpText}`;
-          await sendChatMessage(connection, battleUser.user_id, chatMessage, battle.id);
+          let chatMessage = `Бой закончен ${winLoseText}. +${expGain} опыта, +${pointsGained} очков характеристик, +${krGained} KR.${levelUpText}`;
           
-          // reload будет отправлен через affectedUsers позже
+          // Добавляем информацию о новом опыте для отладки
+          if (newExp >= 6800 && currentLevel === 1 && currentUp === 0) {
+            chatMessage += ` (Опыт: ${currentExp} → ${newExp}, до следующего UP: ${6800 - newExp > 0 ? 6800 - newExp : 0})`;
+          }
+          
+          await sendChatMessage(connection, battleUser.user_id, chatMessage, battle.id);
         }
       }
     }
